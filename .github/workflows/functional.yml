@@ -77,6 +77,8 @@ jobs:
 
       - name: Run acceptance tests
         run: API_BASE_URL=http://localhost:8010 python -m pytest verify/acceptance/ -v --tb=short
+        env:
+          DATABASE_URL: "postgresql+asyncpg://chess:chess@localhost:5432/chess_mvp"
 
       - name: Collect logs on failure
         if: failure()
