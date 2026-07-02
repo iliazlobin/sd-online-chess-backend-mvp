@@ -3,11 +3,12 @@ from __future__ import annotations
 import uuid
 from datetime import UTC, datetime
 
-from sqlalchemy import BigInteger, ForeignKey, Integer, String, Text
+from sqlalchemy import BigInteger, DateTime, ForeignKey, Integer, String, Text
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from chess_mvp.database import Base
+from chess_mvp.models.game import Game  # noqa: F401
 
 
 class Move(Base):
@@ -26,7 +27,9 @@ class Move(Base):
     promotion: Mapped[str | None] = mapped_column(String(2), nullable=True)
     fen_before: Mapped[str] = mapped_column(Text, nullable=False)
     fen_after: Mapped[str] = mapped_column(Text, nullable=False)
-    created_at: Mapped[datetime] = mapped_column(default=lambda: datetime.now(UTC))
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=lambda: datetime.now(UTC)
+    )
 
     # Relationships
-    game: Mapped[Game] = relationship("Game", back_populates="moves")  # noqa: F821
+    game: Mapped[Game] = relationship("Game", back_populates="moves")

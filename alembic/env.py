@@ -1,8 +1,8 @@
 from logging.config import fileConfig
 
-from alembic import context
 from sqlalchemy import engine_from_config, pool
 
+from alembic import context
 from chess_mvp.base import Base
 from chess_mvp.config import settings
 
@@ -11,7 +11,9 @@ if config.config_file_name is not None:
     fileConfig(config.config_file_name)
 
 # Override sqlalchemy.url from settings (reads env/ .env)
-config.set_main_option("sqlalchemy.url", settings.DATABASE_URL)
+# Alembic needs a sync URL; strip +asyncpg if present.
+_sync_url = settings.DATABASE_URL.replace("+asyncpg", "")
+config.set_main_option("sqlalchemy.url", _sync_url)
 
 target_metadata = Base.metadata
 

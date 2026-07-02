@@ -3,7 +3,7 @@ from __future__ import annotations
 import uuid
 from datetime import UTC, datetime
 
-from sqlalchemy import ForeignKey
+from sqlalchemy import DateTime, ForeignKey
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column
 
@@ -16,4 +16,6 @@ class MatchmakingQueue(Base):
     player_id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), ForeignKey("players.player_id"), primary_key=True
     )
-    joined_at: Mapped[datetime] = mapped_column(default=lambda: datetime.now(UTC))
+    joined_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=lambda: datetime.now(UTC)
+    )

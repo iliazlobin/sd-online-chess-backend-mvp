@@ -3,7 +3,7 @@ from __future__ import annotations
 import uuid
 from datetime import UTC, datetime
 
-from sqlalchemy import String, Text
+from sqlalchemy import DateTime, String, Text
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -23,7 +23,7 @@ class Player(Base):
         String(128), unique=True, nullable=True
     )
     created_at: Mapped[datetime] = mapped_column(
-        default=lambda: datetime.now(UTC)
+        DateTime(timezone=True), default=lambda: datetime.now(UTC)
     )
 
     # Relationships
