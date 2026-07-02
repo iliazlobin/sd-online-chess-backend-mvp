@@ -19,9 +19,7 @@ class Player(Base):
     token: Mapped[str] = mapped_column(
         Text, unique=True, nullable=False, default=lambda: str(uuid.uuid4())
     )
-    username: Mapped[str | None] = mapped_column(
-        String(128), unique=True, nullable=True
-    )
+    username: Mapped[str | None] = mapped_column(String(128), unique=True, nullable=True)
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), default=lambda: datetime.now(UTC)
     )

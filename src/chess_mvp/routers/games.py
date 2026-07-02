@@ -22,9 +22,7 @@ async def get_game(
 ):
     """Get game state and move history."""
     result = await session.execute(
-        select(Game)
-        .options(selectinload(Game.moves))
-        .where(Game.game_id == game_id)
+        select(Game).options(selectinload(Game.moves)).where(Game.game_id == game_id)
     )
     game = result.scalar_one_or_none()
     if game is None:
@@ -61,9 +59,7 @@ async def list_player_games(
 ):
     """List games for a player."""
     result = await session.execute(
-        select(Game).where(
-            (Game.white_player == player_id) | (Game.black_player == player_id)
-        )
+        select(Game).where((Game.white_player == player_id) | (Game.black_player == player_id))
     )
     games = result.scalars().all()
     return {

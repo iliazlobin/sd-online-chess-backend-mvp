@@ -52,8 +52,6 @@ async def test_fr5_resign():
         await ws2.send(json.dumps({"type": "resign"}))
         response_data = json.loads(await ws2.recv())
 
-        assert response_data["type"] == "game_over", (
-            f"Expected game_over, got {response_data}"
-        )
+        assert response_data["type"] == "game_over", f"Expected game_over, got {response_data}"
         # Black resigns → White wins
         assert "White wins" in response_data.get("result", "")

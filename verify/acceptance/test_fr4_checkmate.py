@@ -51,13 +51,13 @@ async def test_fr4_checkmate_scholars_mate():
         # White moves first
         # Scholar's Mate sequence: alternating white/black
         moves = [
-            (ws1, "e2", "e4"),   # 1. e4 (white)
-            (ws2, "e7", "e5"),   # 1... e5 (black)
-            (ws1, "f1", "c4"),   # 2. Bc4 (white)
-            (ws2, "b8", "c6"),   # 2... Nc6 (black)
-            (ws1, "d1", "h5"),   # 3. Qh5 (white)
-            (ws2, "g8", "f6"),   # 3... Nf6 (black)
-            (ws1, "h5", "f7"),   # 4. Qxf7# (white, checkmate)
+            (ws1, "e2", "e4"),  # 1. e4 (white)
+            (ws2, "e7", "e5"),  # 1... e5 (black)
+            (ws1, "f1", "c4"),  # 2. Bc4 (white)
+            (ws2, "b8", "c6"),  # 2... Nc6 (black)
+            (ws1, "d1", "h5"),  # 3. Qh5 (white)
+            (ws2, "g8", "f6"),  # 3... Nf6 (black)
+            (ws1, "h5", "f7"),  # 4. Qxf7# (white, checkmate)
         ]
 
         for ws, from_sq, to_sq in moves:
@@ -70,9 +70,7 @@ async def test_fr4_checkmate_scholars_mate():
                 )
             else:
                 # Last move delivers checkmate → game_over
-                assert resp["type"] == "game_over", (
-                    f"Expected game_over after Qxf7#, got {resp}"
-                )
+                assert resp["type"] == "game_over", f"Expected game_over after Qxf7#, got {resp}"
                 assert "1-0" in resp.get("result", ""), (
                     f"Expected White wins (1-0), got result={resp.get('result')}"
                 )

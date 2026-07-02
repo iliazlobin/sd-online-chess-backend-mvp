@@ -23,7 +23,7 @@ jobs:
           python-version: "3.12"
 
       - name: Install ruff
-        run: pip install 'ruff>=0.8,<0.9'
+        run: pip install 'ruff==0.15.20'
 
       - name: ruff check
         run: ruff check --output-format=github

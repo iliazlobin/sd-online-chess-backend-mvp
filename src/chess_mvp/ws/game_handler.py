@@ -41,9 +41,7 @@ async def handle_game_ws(websocket: WebSocket, game_id: uuid.UUID, token: str) -
     factory = get_session_factory()
     async with factory() as session:
         result = await session.execute(
-            select(Game)
-            .options(selectinload(Game.moves))
-            .where(Game.game_id == game_id)
+            select(Game).options(selectinload(Game.moves)).where(Game.game_id == game_id)
         )
         db_game = result.scalar_one_or_none()
 
@@ -71,32 +69,40 @@ async def handle_game_ws(websocket: WebSocket, game_id: uuid.UUID, token: str) -
 
     # --- Persist callbacks ---
     async def persist_move_callback(
-        s: GameState, from_sq: str, to_sq: str, prom: str | None,
-        fen_before: str, fen_after: str,
+        s: GameState,
+        from_sq: str,
+        to_sq: str,
+        prom: str | None,
+        fen_before: str,
+        fen_after: str,
     ) -> None:
         sf = get_session_factory()
         async with sf() as sess, sess.begin():
             r = await sess.execute(
-                select(Game)
-                .options(selectinload(Game.moves))
-                .where(Game.game_id == s.game_id)
+                select(Game).options(selectinload(Game.moves)).where(Game.game_id == s.game_id)
             )
             g = r.scalar_one()
             move_number = len(g.moves) + 1 if g.moves else 1
             await persist_move(
-                sess, g, player_id, move_number,
-                from_sq, to_sq, prom, fen_before, fen_after,
+                sess,
+                g,
+                player_id,
+                move_number,
+                from_sq,
+                to_sq,
+                prom,
+                fen_before,
+                fen_after,
                 s.pgn,
             )
 
     async def persist_resign_callback(
-        s: GameState, is_resignation: bool = True,
+        s: GameState,
+        is_resignation: bool = True,
     ) -> None:
         sf = get_session_factory()
         async with sf() as sess, sess.begin():
-            r = await sess.execute(
-                select(Game).where(Game.game_id == s.game_id)
-            )
+            r = await sess.execute(select(Game).where(Game.game_id == s.game_id))
             g = r.scalar_one()
             await end_game(sess, g, s.result, s.termination)
 
@@ -118,9 +124,7 @@ async def handle_game_ws(websocket: WebSocket, game_id: uuid.UUID, token: str) -
             try:
                 msg = json.loads(raw)
             except json.JSONDecodeError:
-                await websocket.send_text(
-                    json.dumps({"type": "error", "code": "INVALID_JSON"})
-                )
+                await websocket.send_text(json.dumps({"type": "error", "code": "INVALID_JSON"}))
                 continue
 
             msg_type = msg.get("type")
@@ -131,7 +135,11 @@ async def handle_game_ws(websocket: WebSocket, game_id: uuid.UUID, token: str) -
                 promotion = msg.get("promotion")
 
                 response = await game_manager.handle_move(
-                    game_id, player_id, from_sq, to_sq, promotion,
+                    game_id,
+                    player_id,
+                    from_sq,
+                    to_sq,
+                    promotion,
                     persist_callback=persist_move_callback,
                 )
 
@@ -152,7 +160,8 @@ async def handle_game_ws(websocket: WebSocket, game_id: uuid.UUID, token: str) -
 
             elif msg_type == "resign":
                 response = await game_manager.handle_resign(
-                    game_id, player_id,
+                    game_id,
+                    player_id,
                     persist_callback=persist_resign_callback,
                 )
 

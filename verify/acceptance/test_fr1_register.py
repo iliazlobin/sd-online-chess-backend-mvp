@@ -29,6 +29,7 @@ def test_fr1_register_player(client):
 def test_fr1_register_duplicate_name(client):
     """Register with duplicate username → 409."""
     import uuid
+
     unique_name = f"player_{uuid.uuid4().hex[:8]}"
 
     # First, register a player with a name

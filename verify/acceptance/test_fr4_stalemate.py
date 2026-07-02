@@ -58,35 +58,35 @@ async def test_fr4_stalemate():
 
         # Stalemate sequence — alternating white (ws1) then black (ws2)
         moves = [
-            (ws1, "e2", "e3"),   # 1. e3
-            (ws2, "a7", "a5"),   # 1... a5
-            (ws1, "d1", "h5"),   # 2. Qh5
-            (ws2, "a8", "a6"),   # 2... Ra6
-            (ws1, "h5", "a5"),   # 3. Qxa5
-            (ws2, "h7", "h5"),   # 3... h5
-            (ws1, "a5", "c7"),   # 4. Qxc7
-            (ws2, "a6", "h6"),   # 4... Rah6
-            (ws1, "h2", "h4"),   # 5. h4
-            (ws2, "f7", "f6"),   # 5... f6
-            (ws1, "c7", "d7"),   # 6. Qxd7+
-            (ws2, "e8", "f7"),   # 6... Kf7
-            (ws1, "d7", "b7"),   # 7. Qxb7
-            (ws2, "d8", "d3"),   # 7... Qd3
-            (ws1, "b7", "b8"),   # 8. Qxb8
-            (ws2, "d3", "h7"),   # 8... Qh7
-            (ws1, "b8", "c8"),   # 9. Qxc8
-            (ws2, "f7", "g6"),   # 9... Kg6
-            (ws1, "c8", "e6"),   # 10. Qe6 — stalemate!
+            (ws1, "e2", "e3"),  # 1. e3
+            (ws2, "a7", "a5"),  # 1... a5
+            (ws1, "d1", "h5"),  # 2. Qh5
+            (ws2, "a8", "a6"),  # 2... Ra6
+            (ws1, "h5", "a5"),  # 3. Qxa5
+            (ws2, "h7", "h5"),  # 3... h5
+            (ws1, "a5", "c7"),  # 4. Qxc7
+            (ws2, "a6", "h6"),  # 4... Rah6
+            (ws1, "h2", "h4"),  # 5. h4
+            (ws2, "f7", "f6"),  # 5... f6
+            (ws1, "c7", "d7"),  # 6. Qxd7+
+            (ws2, "e8", "f7"),  # 6... Kf7
+            (ws1, "d7", "b7"),  # 7. Qxb7
+            (ws2, "d8", "d3"),  # 7... Qd3
+            (ws1, "b7", "b8"),  # 8. Qxb8
+            (ws2, "d3", "h7"),  # 8... Qh7
+            (ws1, "b8", "c8"),  # 9. Qxc8
+            (ws2, "f7", "g6"),  # 9... Kg6
+            (ws1, "c8", "e6"),  # 10. Qe6 — stalemate!
         ]
 
         for i, (ws, from_sq, to_sq) in enumerate(moves):
             await ws.send(json.dumps({"type": "move", "from": from_sq, "to": to_sq}))
             resp = json.loads(await ws.recv())
 
-            is_last = (i == len(moves) - 1)
+            is_last = i == len(moves) - 1
             if not is_last:
                 assert resp["type"] == "move_made", (
-                    f"Move {i+1} ({from_sq}-{to_sq}): expected move_made, got {resp}"
+                    f"Move {i + 1} ({from_sq}-{to_sq}): expected move_made, got {resp}"
                 )
             else:
                 # Last move triggers stalemate → game_over with draw

@@ -30,14 +30,10 @@ async def create_game(
     return game
 
 
-async def get_game_by_id(
-    session: AsyncSession, game_id: uuid.UUID | str
-) -> Game | None:
+async def get_game_by_id(session: AsyncSession, game_id: uuid.UUID | str) -> Game | None:
     """Load a game with its moves eagerly loaded."""
     result = await session.execute(
-        select(Game)
-        .options(selectinload(Game.moves))
-        .where(Game.game_id == game_id)
+        select(Game).options(selectinload(Game.moves)).where(Game.game_id == game_id)
     )
     return result.scalar_one_or_none()
 

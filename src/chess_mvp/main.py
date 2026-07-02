@@ -50,9 +50,7 @@ def create_app() -> FastAPI:
         # Validate token
         factory = get_session_factory()
         async with factory() as session:
-            result = await session.execute(
-                select(Player).where(Player.token == token)
-            )
+            result = await session.execute(select(Player).where(Player.token == token))
             player = result.scalar_one_or_none()
 
         if player is None:
@@ -72,9 +70,7 @@ def create_app() -> FastAPI:
             ) from e
 
         async with factory() as session:
-            result = await session.execute(
-                select(Game).where(Game.game_id == gid)
-            )
+            result = await session.execute(select(Game).where(Game.game_id == gid))
             db_game = result.scalar_one_or_none()
 
         if db_game is None:

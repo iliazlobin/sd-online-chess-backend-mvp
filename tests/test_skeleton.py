@@ -1,4 +1,5 @@
 """Skeleton test: verify app can be imported and health endpoint exists."""
+
 from __future__ import annotations
 
 from chess_mvp.main import create_app

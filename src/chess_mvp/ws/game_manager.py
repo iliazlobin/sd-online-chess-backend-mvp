@@ -133,15 +133,19 @@ class GameManager:
 
             # Send game state to connecting player
             color = state.player_color(player_id)
-            await ws.send_text(json.dumps({
-                "type": "game_state",
-                "fen": state.board.fen(),
-                "your_color": color,
-                "players": {
-                    "white": str(state.white_id),
-                    "black": str(state.black_id),
-                },
-            }))
+            await ws.send_text(
+                json.dumps(
+                    {
+                        "type": "game_state",
+                        "fen": state.board.fen(),
+                        "your_color": color,
+                        "players": {
+                            "white": str(state.white_id),
+                            "black": str(state.black_id),
+                        },
+                    }
+                )
+            )
 
             # Notify about opponent connection status
             opponent_ws = state.get_ws(state.opponent_id(player_id))
@@ -165,9 +169,7 @@ class GameManager:
             opponent_ws = state.get_ws(state.opponent_id(player_id))
             if opponent_ws is not None:
                 with contextlib.suppress(Exception):
-                    await opponent_ws.send_text(
-                        json.dumps({"type": "opponent_disconnected"})
-                    )
+                    await opponent_ws.send_text(json.dumps({"type": "opponent_disconnected"}))
 
     async def handle_move(
         self,
@@ -281,9 +283,7 @@ class GameManager:
             with contextlib.suppress(Exception):
                 await opponent_ws.send_text(message)
 
-    async def broadcast_to_both(
-        self, game_id: uuid.UUID, message: str
-    ) -> None:
+    async def broadcast_to_both(self, game_id: uuid.UUID, message: str) -> None:
         """Send a message to both connected players."""
         state = self._games.get(game_id)
         if state is None:
