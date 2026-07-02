@@ -10,13 +10,11 @@ ENV PATH="/opt/venv/bin:$PATH"
 
 WORKDIR /build
 COPY pyproject.toml ./
+COPY src/ ./src/
 
-# Install dependencies (no dev extras for production)
+# Install package (dev extras for the builder stage since tests run here too)
 RUN pip install --no-cache-dir ".[dev]" && \
     pip check
-
-# Copy source
-COPY src/ ./src/
 
 # Install the project itself so entry-points and the package are both available
 RUN pip install --no-cache-dir --no-deps .

@@ -21,6 +21,11 @@ jobs:
       - name: Copy .env
         run: cp .env.example .env
 
+      - name: Install docker compose
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq docker-compose-plugin
+
       - name: Start services
         run: |
           APP_PORT=8010 docker compose up --build -d
