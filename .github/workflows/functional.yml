@@ -1,0 +1,51 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# functional.yml — Integration / acceptance tests
+# Spins up the full stack (Postgres + App), runs migrations,
+# then executes the black-box acceptance suite from verify/acceptance/.
+# ─────────────────────────────────────────────────────────────────────────────
+
+name: functional
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  acceptance:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Copy .env
+        run: cp .env.example .env
+
+      - name: Start services
+        run: |
+          APP_PORT=8010 docker compose up --build -d
+          for i in $(seq 1 30); do
+            if curl -sf http://localhost:8010/healthz > /dev/null 2>&1; then
+              echo "App is ready"
+              break
+            fi
+            echo "Waiting for app... ($i/30)"
+            sleep 2
+          done
+
+      - name: Run database migrations
+        run: docker compose run --rm app alembic upgrade head
+
+      - name: Install test deps
+        run: pip install 'httpx>=0.27,<1.0' 'pytest>=8.0,<9.0' 'pytest-asyncio>=0.24,<1.0'
+
+      - name: Run acceptance tests
+        run: API_BASE_URL="http://localhost:8010" pytest verify/acceptance/ -v --tb=short
+
+      - name: Collect logs on failure
+        if: failure()
+        run: docker compose logs
+
+      - name: Teardown
+        if: always()
+        run: docker compose down --volumes --remove-orphans

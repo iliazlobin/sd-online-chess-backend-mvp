@@ -1,0 +1,40 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# ci.yml — Build and unit-test verification
+# Builds the Docker image, installs the package, and runs the white-box test
+# suite (SQLite-backed, no external PostgreSQL needed).
+# ─────────────────────────────────────────────────────────────────────────────
+
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install project
+        run: pip install -e ".[dev]"
+
+      - name: Run unit tests
+        run: pytest tests/ -v --tb=short
+
+      - name: Build Docker image
+        run: docker build -t chess-mvp .
+
+      - name: Verify image starts
+        run: |
+          docker run -d --name chess-ci \
+            -e DATABASE_URL=postgresql+asyncpg://chess:chess@localhost:5432/chess \
+            chess-mvp sleep 5
+          docker rm -f chess-ci
