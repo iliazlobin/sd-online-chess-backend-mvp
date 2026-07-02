@@ -1,3 +1,4 @@
+# --- Python ---
 __pycache__/
 *.py[cod]
 *.egg-info/
@@ -5,15 +6,23 @@ __pycache__/
 .venv*/
 venv/
 env/
-verify/.venv/
 .env
 .pytest_cache/
 .ruff_cache/
 .mypy_cache/
 build/
 dist/
-*.log
+
+# --- Redis (if applicable) ---
 *.rdb
 dump.rdb
-verify/logs/
-verify/state/
+
+# --- OS ---
+.DS_Store
+Thumbs.db
+
+# --- IDE ---
+.idea/
+.vscode/
+*.swp
+*.swo

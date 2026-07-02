@@ -1,0 +1,38 @@
+services:
+  db:
+    # Postgres host port NOT published — only `app` talks to it over the
+    # compose network. The default port 5432 on the host is likely occupied
+    # by hermes-postgres; we intentionally do not expose it.
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: chess
+      POSTGRES_PASSWORD: chess
+      POSTGRES_DB: chess_mvp
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U chess -d chess_mvp"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  app:
+    build: .
+    restart: unless-stopped
+    ports:
+      - "${APP_PORT:-8010}:8000"
+    environment:
+      DATABASE_URL: "postgresql+asyncpg://chess:chess@db:5432/chess_mvp"
+    depends_on:
+      db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/healthz"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+      start_period: 10s
+
+volumes:
+  pgdata:
