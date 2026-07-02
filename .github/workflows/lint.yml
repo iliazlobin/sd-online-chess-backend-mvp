@@ -1,6 +1,6 @@
 # ─────────────────────────────────────────────────────────────────────────────
 # lint.yml — Static analysis (ruff check + ruff format)
-# Runs on every push and pull request to main.
+# Runs on every push, pull request to main, and daily schedule.
 # ─────────────────────────────────────────────────────────────────────────────
 
 name: lint
@@ -11,14 +11,14 @@ on:
   pull_request:
     branches: [main]
   schedule:
-    - cron: "23 7 * * *"
-
-permissions:
-  contents: read
+    - cron: "17 13 * * *"
 
 concurrency:
   group: lint-${{ github.ref }}
   cancel-in-progress: true
+
+permissions:
+  contents: read
 
 jobs:
   ruff:
