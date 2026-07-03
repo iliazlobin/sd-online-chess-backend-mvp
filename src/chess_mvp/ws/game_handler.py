@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import contextlib
 import json
 import logging
 import uuid
@@ -187,3 +188,8 @@ async def handle_game_ws(websocket: WebSocket, game_id: uuid.UUID, token: str) -
         logger.exception("Error in game handler for player %s, game %s", player_id, game_id)
     finally:
         await game_manager.disconnect(game_id, player_id)
+        # Close the server-side WebSocket so the client gets a proper close frame
+        # (when the game ends via resign/checkmate the handler exits the receive loop
+        #  with the ws still open, and the client's context-manager close will hang)
+        with contextlib.suppress(RuntimeError, ConnectionError):
+            await websocket.close()
