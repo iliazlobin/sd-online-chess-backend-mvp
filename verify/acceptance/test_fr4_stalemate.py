@@ -85,15 +85,15 @@ async def test_fr4_stalemate():
 
             is_last = i == len(moves) - 1
             if not is_last:
-                assert (
-                    resp["type"] == "move_made"
-                ), f"Move {i + 1} ({from_sq}-{to_sq}): expected move_made, got {resp}"
+                assert resp["type"] == "move_made", (
+                    f"Move {i + 1} ({from_sq}-{to_sq}): expected move_made, got {resp}"
+                )
             else:
                 # Last move triggers stalemate → game_over with draw
-                assert (
-                    resp["type"] == "game_over"
-                ), f"Final move: expected game_over (stalemate), got {resp}"
+                assert resp["type"] == "game_over", (
+                    f"Final move: expected game_over (stalemate), got {resp}"
+                )
                 result = resp.get("result", "")
-                assert (
-                    "½-½" in result or "1/2-1/2" in result or "draw" in result.lower()
-                ), f"Expected draw result, got {result}"
+                assert "½-½" in result or "1/2-1/2" in result or "draw" in result.lower(), (
+                    f"Expected draw result, got {result}"
+                )

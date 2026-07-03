@@ -76,9 +76,9 @@ def test_fr2_matchmaking_matched(client):
         "/matchmaking",
         headers={"Authorization": f"Bearer {token2}"},
     )
-    assert (
-        resp2.status_code == 202
-    ), f"Expected 202 for match, got {resp2.status_code}: {resp2.text}"
+    assert resp2.status_code == 202, (
+        f"Expected 202 for match, got {resp2.status_code}: {resp2.text}"
+    )
     data = resp2.json()
     assert "game_id" in data
     assert "ws_url" in data
