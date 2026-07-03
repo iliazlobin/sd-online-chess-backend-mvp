@@ -65,12 +65,12 @@ async def test_fr4_checkmate_scholars_mate():
             resp = json.loads(await ws.recv())
             # All moves except the last should be move_made
             if (ws, from_sq, to_sq) != moves[-1]:
-                assert resp["type"] == "move_made", (
-                    f"Expected move_made for {from_sq}-{to_sq}, got {resp}"
-                )
+                assert (
+                    resp["type"] == "move_made"
+                ), f"Expected move_made for {from_sq}-{to_sq}, got {resp}"
             else:
                 # Last move delivers checkmate → game_over
                 assert resp["type"] == "game_over", f"Expected game_over after Qxf7#, got {resp}"
-                assert "1-0" in resp.get("result", ""), (
-                    f"Expected White wins (1-0), got result={resp.get('result')}"
-                )
+                assert "1-0" in resp.get(
+                    "result", ""
+                ), f"Expected White wins (1-0), got result={resp.get('result')}"

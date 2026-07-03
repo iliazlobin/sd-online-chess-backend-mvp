@@ -27,3 +27,8 @@ Thumbs.db
 *.swp
 *.swo
 .env
+*.log
+verify/logs/
+verify/state/
+.finalize.lock/
+.noship
