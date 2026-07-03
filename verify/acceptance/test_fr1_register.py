@@ -38,6 +38,6 @@ def test_fr1_register_duplicate_name(client):
 
     # Attempt duplicate
     resp2 = client.post("/players", json={"username": unique_name})
-    assert resp2.status_code == 409, (
-        f"Expected 409 for duplicate, got {resp2.status_code}: {resp2.text}"
-    )
+    assert (
+        resp2.status_code == 409
+    ), f"Expected 409 for duplicate, got {resp2.status_code}: {resp2.text}"
