@@ -25,6 +25,8 @@ async def post_matchmaking(
     """
     result = await enter_matchmaking(session, player.player_id)
 
+    await session.commit()
+
     if result.status == "matched":
         return JSONResponse(
             status_code=202,

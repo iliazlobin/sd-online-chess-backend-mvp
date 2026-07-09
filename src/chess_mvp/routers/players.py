@@ -22,6 +22,7 @@ async def post_register(
     username = body.username if body else None
     try:
         player = await register_player(session, username=username)
+        await session.commit()
     except ValueError as e:
         raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail=str(e)) from e
     return PlayerResponse(
