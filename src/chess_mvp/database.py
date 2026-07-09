@@ -49,12 +49,21 @@ def get_session_factory():
 
 
 async def get_session() -> AsyncGenerator[AsyncSession, None]:
-    """FastAPI dependency that yields an async DB session."""
+    """FastAPI dependency that yields an async DB session.
+
+    NOTE: Does NOT auto-commit.  Because FastAPI dependency cleanup runs
+    *after* the HTTP response is sent, any commit placed after ``yield`` will
+    race with the caller's next request: the response may claim "player
+    created" while the row still isn't visible to the next read.
+
+    Every endpoint that WRITES data must explicitly call
+    ``await session.commit()`` before returning its response.  Read-only
+    endpoints don't need to commit.
+    """
     factory = get_session_factory()
     async with factory() as session:
         try:
             yield session
-            await session.commit()
         except Exception:
             await session.rollback()
             raise
